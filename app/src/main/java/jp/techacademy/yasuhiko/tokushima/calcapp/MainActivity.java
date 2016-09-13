@@ -11,6 +11,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import org.apache.commons.lang3.math.NumberUtils;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     // Log用タグ
@@ -109,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             } else {
                 // カンマ編集、小数点以下の編集を行う
                 String str1 = formatNum(editText.getText().toString().replace(",", ""));
-                if (log_f) Log.d(logTag, "カンマと小数点以下整形後 入力値 = " + str1);
+                if (log_f) Log.d(logTag, "カンマと小数点以下整形後 入力値 = " + str1 + "入力桁数 = " + String.valueOf(str1.length()));
                 editText.setText(str1);
 
                 // カーソル位置を最後に移動させる
@@ -123,7 +126,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // 数値チェック（Apache Commons LangのNumberUtils使用）
     public boolean isNumeric(String s) {
         if (log_f) Log.d(logTag,"(isNumeric) 入力 = [" + s + "]");
+
+        // commons-langを使った数値チェック
         return NumberUtils.isNumber(s);
+
+/*        // parseDoubleを使って、数値変換し、try - catch を使って数値チェック
+        try {
+            Double.parseDouble(s);
+            return true;
+        } catch (NumberFormatException nfex) {
+            return false;
+        }
+
+        // 正規表現で数値チェック
+        String regex = "^([0-9]\\d*|0)(\\.\\d+)?$";
+        Pattern p = Pattern.compile(regex);
+        Matcher m1 = p.matcher(s);
+        return m1.find();
+*/
     }
 
     // 四則演算処理
@@ -237,11 +257,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             str1z = "0";
         }
         if (log_f) Log.d(logTag, "str1 = " + str1 + ", str1z = " + str1z);
-        if (isNumeric(str1z)) {
-            int i_str1 = Integer.parseInt(str1z);
-            str1z = String.valueOf(i_str1);
-            if (log_f) Log.d(logTag, "str1z = " + str1z + ", i_str1 = " + String.valueOf(i_str1));
-        }
 
         // 整数部をカンマ区切りにする
         int j = str1z.length();
